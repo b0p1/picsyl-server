@@ -19,17 +19,15 @@ exports.singleUser = (req, res) => {
 };
 
 exports.userPosts = (req, res) => {
-    knex('posts')
-      .where({ user_id: req.params.id })
-      .then((data) => {
-        res.status(200).json(data);
-      })
-      .catch((err) =>
-        res
-          .status(400)
-          .send(
-            `Error retrieving posts from User ${req.params.id} ${err}`
-          )
-      );
-  };
-  
+  knex("posts")
+    .where({ "users.user_id": req.params.id })
+    .innerJoin("users", "posts.user_id", "users.user_id")
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) =>
+      res
+        .status(400)
+        .send(`Error retrieving posts from User ${req.params.id} ${err}`)
+    );
+};
