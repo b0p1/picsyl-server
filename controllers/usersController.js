@@ -1,8 +1,8 @@
 const knex = require("knex")(require("../knexfile"));
 
 exports.singleUser = (req, res) => {
-  knex("user")
-    .where({ id: req.params.id })
+  knex("users")
+    .where({ user_id: req.params.id })
     .then((data) => {
       // If record is not found, respond with 404
       if (!data.length) {
@@ -17,3 +17,19 @@ exports.singleUser = (req, res) => {
       res.status(400).send(`Error retrieving User ${req.params.id} ${err}`)
     );
 };
+
+exports.userPosts = (req, res) => {
+    knex('posts')
+      .where({ user_id: req.params.id })
+      .then((data) => {
+        res.status(200).json(data);
+      })
+      .catch((err) =>
+        res
+          .status(400)
+          .send(
+            `Error retrieving posts from User ${req.params.id} ${err}`
+          )
+      );
+  };
+  
