@@ -6,6 +6,6 @@ const likesController = require("../controllers/likesController")
 router.route("/").get(postsController.index);
 router.route("/:id").get(postsController.singlePost);
 router.route("/:id/comments").get(commentsController.postComments);
-router.route("/:id/likes").get(likesController.postLikes);
+router.route("/:id/likes").get(likesController.index);
 
 module.exports = router;
