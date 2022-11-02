@@ -9,7 +9,7 @@ exports.index = (req, res) => {
         .then((likes) => {
           const obj = data[0];
           obj.likes = likes;
-          res.status(200).json(obj);
+          res.status(200).json(data);
         });
     })
     .catch((err) => res.status(400).send(`Error retrieving posts ${err}`));
