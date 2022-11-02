@@ -1,58 +1,67 @@
 const knex = require("knex")(require("../knexfile"));
 
-exports.index = (req, res) => {
-  knex("posts")
-    // .select("post_id", "post_img", "post_desc")
-    .innerJoin("users", "posts.user_id", "users.user_id")
-    .then((data) => {
-      knex("likes")
-        .then((likes) => {
-          const obj = data[0];
-          obj.likes = likes;
-          res.status(200).json(data);
-        });
-    })
-    .catch((err) => res.status(400).send(`Error retrieving posts ${err}`));
-};
+exports.index = async (req, res) => {
+  const posts = await knex("posts").innerJoin(
+    "users",
+    "posts.user_id",
+    "users.user_id"
+  );
 
-exports.singlePost = (req, res) => {
-  knex("posts")
-    .where({ post_id: req.params.id })
-    .innerJoin("users", "posts.user_id", "users.user_id")
-    .then((data) => {
-      knex("likes")
-        .where("post_id", req.params.id)
-        .then((likes) => {
-          const obj = data[0];
-          obj.likes = likes;
-          res.status(200).json(obj);
-        });
-      // If record is not found, respond with 404
-      if (!data.length) {
-        return res
-          .status(404)
-          .send(`Record with id: ${req.params.id} is not found`);
-      }
-    })
-    .catch((err) =>
-      res.status(400).send(`Error retrieving post ${req.params.id} ${err}`)
+  const allLikes = await knex("likes");
+  const postsWithLikes = posts.map((post) => {
+    const likes = allLikes.filter((like) => like.post_id === post.post_id);
+    post.likes = likes;
+    return post;
+  });
+
+  const allComments = await knex("comments");
+  const postsWithLikesAndComments = postsWithLikes.map((post) => {
+    const comments = allComments.filter(
+      (comment) => comment.post_id === post.post_id
     );
+    post.comments = comments;
+    return post;
+  });
+
+  res.json(postsWithLikesAndComments);
+
+  // .catch((err) => res.status(400).send(`Error retrieving posts ${err}`));
 };
 
-// exports.addPost = (req, res) => {
-//   // Validation
-//   if (!req.body.img || !req.body.desc) {
-//     return res
-//       .status(400)
-//       .send("Please make sure to provide an image and description");
-//   }
+exports.singlePost = async (req, res) => {
+  const posts = await knex("posts")
+    .where({ post_id: req.params.id })
+    .innerJoin("users", "posts.user_id", "users.user_id");
 
-//   knex("posts")
-//     .insert(req.body)
-//     .then((data) => {
-//       // For POST requests we need to respond with 201 and the location of the newly created record
-//       const newPostURL = `/posts/${data[0]}`;
-//       res.status(201).location(newPostURL).send(newPostURL);
-//     })
-//     .catch((err) => res.status(400).send(`Error creating Post: ${err}`));
-// };
+  const likes = await knex("likes").where("post_id", req.params.id);
+  const comments = await knex("comments").where("post_id", req.params.id);
+
+  if (!posts.length) {
+    return res
+      .status(404)
+      .send(`Record with id: ${req.params.id} is not found`);
+  } else {
+    const post = posts[0];
+    post.likes = likes;
+    post.comments = comments;
+    res.send(post);
+  }
+};
+
+exports.addPost = (req, res) => {
+  // Validation
+  if (!req.body.img || !req.body.desc) {
+    return res
+      .status(400)
+      .send("Please make sure to provide an image and description");
+  }
+
+  knex("posts")
+    .insert(req.body)
+    .then((data) => {
+      // For POST requests we need to respond with 201 and the location of the newly created record
+      const newPostURL = `/posts/${data[0]}`;
+      res.status(201).location(newPostURL).send(newPostURL);
+    })
+    .catch((err) => res.status(400).send(`Error creating Post: ${err}`));
+};
