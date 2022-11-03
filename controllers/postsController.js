@@ -1,23 +1,26 @@
 const knex = require("knex")(require("../knexfile"));
 
-exports.index = async (req, res) => {
-  const posts = await knex("posts").innerJoin(
-    "users",
-    "posts.user_id",
-    "users.user_id"
-  );
-
+exports.index = async (_req, res) => {
+  const posts = await knex("posts")
+    .leftJoin("users", "posts.user_id", "users.id")
+    .select(
+      "posts.id",
+      "users.username",
+      "users.img as user_img",
+      "posts.img",
+      "posts.desc"
+    );
   const allLikes = await knex("likes");
   const postsWithLikes = posts.map((post) => {
-    const likes = allLikes.filter((like) => like.post_id === post.post_id);
+    const likes = allLikes.filter((like) => like.post_id === post.id);
     post.likes = likes;
     return post;
   });
-
+  //  console.log(postsWithLikes);
   const allComments = await knex("comments");
   const postsWithLikesAndComments = postsWithLikes.map((post) => {
     const comments = allComments.filter(
-      (comment) => comment.post_id === post.post_id
+      (comment) => comment.post_id === post.id
     );
     post.comments = comments;
     return post;
@@ -25,16 +28,26 @@ exports.index = async (req, res) => {
 
   res.json(postsWithLikesAndComments);
 
-  // .catch((err) => res.status(400).send(`Error retrieving posts ${err}`));
+  //   .catch((err) => res.status(400).send(`Error retrieving posts ${err}`));
 };
 
 exports.singlePost = async (req, res) => {
   const posts = await knex("posts")
-    .where({ post_id: req.params.id })
-    .innerJoin("users", "posts.user_id", "users.user_id");
+    .where({ "posts.id": req.params.id })
+    .innerJoin("users", "posts.user_id", "users.id")
+    .select(
+      "posts.id",
+      "users.username",
+      "users.img as user_img",
+      "posts.img",
+      "posts.desc"
+    );
 
   const likes = await knex("likes").where("post_id", req.params.id);
-  const comments = await knex("comments").where("post_id", req.params.id);
+  const comments = await knex("comments")
+    .where("post_id", req.params.id)
+    .leftJoin("users", "comments.user_id", "users.id")
+    .select("comments.id", "users.username", "comments.text");
 
   if (!posts.length) {
     return res
