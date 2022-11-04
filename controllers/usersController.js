@@ -1,8 +1,16 @@
 const knex = require("knex")(require("../knexfile"));
 
-exports.singleUser = (req, res) => {
+exports.index = (_req, res) => {
   knex("users")
-    .where({ user_id: req.params.id })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => res.status(400).send(`Error retrieving Warehouses ${err}`));
+};
+
+exports.singleUser = async (req, res) => {
+  const users = await knex("users")
+    .where({ id: req.params.id })
     .then((data) => {
       // If record is not found, respond with 404
       if (!data.length) {
@@ -20,14 +28,13 @@ exports.singleUser = (req, res) => {
 
 exports.userPosts = (req, res) => {
   knex("posts")
-    .where({ "users.user_id": req.params.id })
-    .innerJoin("users", "posts.user_id", "users.user_id")
+    .where({ user_id: req.params.id })
     .then((data) => {
-      res.status(200).json(data);
+      res.json(data);
     })
-    .catch((err) =>
+    .catch((err) => {
       res
         .status(400)
-        .send(`Error retrieving posts from User ${req.params.id} ${err}`)
-    );
+        .send(`Error retrieving user posts ${req.params.id} ${err}`);
+    });
 };
