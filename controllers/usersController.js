@@ -1,11 +1,11 @@
 const knex = require("knex")(require("../knexfile"));
 
-exports.index = (_req, res) => {
-  knex("users")
-    .then((data) => {
-      res.status(200).json(data);
-    })
-    .catch((err) => res.status(400).send(`Error retrieving Warehouses ${err}`));
+exports.index = async (_req, res) => {
+  const users = await knex("users");
+
+  res.status(200).json(users);
+
+  // .catch((err) => res.status(400).send(`Error retrieving Warehouses ${err}`));
 };
 
 exports.singleUser = async (req, res) => {
@@ -26,8 +26,8 @@ exports.singleUser = async (req, res) => {
     );
 };
 
-exports.userPosts = (req, res) => {
-  knex("posts")
+exports.userPosts = async (req, res) => {
+  const posts = await knex("posts")
     .where({ user_id: req.params.id })
     .then((data) => {
       res.json(data);
