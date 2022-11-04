@@ -17,6 +17,10 @@ app.get("/", (_req, res) => {
 const postsRoutes = require("./routes/posts");
 app.use("/posts", postsRoutes);
 
+
+const likesRoutes = require("./routes/likes");
+app.use("/likes", likesRoutes);
+
 // // User routes
 const usersRoutes = require("./routes/users");
 app.use("/users", usersRoutes);

@@ -16,7 +16,7 @@ exports.up = function (knex) {
       table.string("img").notNullable();
       table.string("desc").notNullable();
       table
-        .integer("user_id")
+        .integer("user_id").defaultTo("5")
         .unsigned()
         .notNullable()
         .references("id")

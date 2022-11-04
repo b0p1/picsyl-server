@@ -72,9 +72,9 @@ exports.addPost = (req, res) => {
   knex("posts")
     .insert(req.body)
     .then((data) => {
-      // For POST requests we need to respond with 201 and the location of the newly created record
       const newPostURL = `/posts/${data[0]}`;
       res.status(201).location(newPostURL).send(newPostURL);
     })
     .catch((err) => res.status(400).send(`Error creating Post: ${err}`));
 };
+
