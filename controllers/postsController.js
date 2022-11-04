@@ -7,6 +7,7 @@ exports.index = async (_req, res) => {
       "posts.id",
       "users.username",
       "users.img as user_img",
+      "user_id",
       "posts.img",
       "posts.desc"
     );

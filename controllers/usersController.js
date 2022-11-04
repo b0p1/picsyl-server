@@ -27,14 +27,12 @@ exports.singleUser = async (req, res) => {
 };
 
 exports.userPosts = async (req, res) => {
-  const posts = await knex("posts")
-    .where({ user_id: req.params.id })
-    .then((data) => {
-      res.json(data);
-    })
-    .catch((err) => {
-      res
-        .status(400)
-        .send(`Error retrieving user posts ${req.params.id} ${err}`);
-    });
+  const posts = await knex("posts").where({ user_id: req.params.id });
+  const allLikes = await knex("likes");
+  const postsWithLikes = posts.map((post) => {
+    const likes = allLikes.filter((like) => like.post_id === post.id);
+    post.likes = likes;
+    return post;
+  });
+  res.json(postsWithLikes);
 };
