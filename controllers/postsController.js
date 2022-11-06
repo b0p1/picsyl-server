@@ -39,6 +39,7 @@ exports.singlePost = async (req, res) => {
     .select(
       "posts.id",
       "users.username",
+      "users.id",
       "users.img as user_img",
       "posts.img",
       "posts.desc"
