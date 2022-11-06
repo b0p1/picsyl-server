@@ -48,7 +48,12 @@ exports.singlePost = async (req, res) => {
   const comments = await knex("comments")
     .where("post_id", req.params.id)
     .leftJoin("users", "comments.user_id", "users.id")
-    .select("comments.id", "users.username", "comments.text");
+    .select(
+      "comments.id",
+      "users.username",
+      "comments.text",
+      "users.img as user_img"
+    );
 
   if (!posts.length) {
     return res
@@ -64,18 +69,19 @@ exports.singlePost = async (req, res) => {
 
 exports.addPost = (req, res) => {
   // Validation
-  if (!req.body.img || !req.body.desc) {
+  if (!req.file || !req.body.desc) {
     return res
       .status(400)
       .send("Please make sure to provide an image and description");
   }
-
+  const fileImage = req.file.filename;
+  const fileDesc = req.body.desc;
+  const userID = 5;
   knex("posts")
-    .insert(req.body)
+    .insert({ img: fileImage, desc: fileDesc, user_id: userID })
     .then((data) => {
       const newPostURL = `/posts/${data[0]}`;
       res.status(201).location(newPostURL).send(newPostURL);
     })
     .catch((err) => res.status(400).send(`Error creating Post: ${err}`));
 };
-
