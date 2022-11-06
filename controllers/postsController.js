@@ -39,7 +39,7 @@ exports.singlePost = async (req, res) => {
     .select(
       "posts.id",
       "users.username",
-      "users.id",
+      "users.id as user_id",
       "users.img as user_img",
       "posts.img",
       "posts.desc"
@@ -77,7 +77,8 @@ exports.addPost = (req, res) => {
   }
   const fileImage = req.file.filename;
   const fileDesc = req.body.desc;
-  const userID = 5;
+  const userID = req.body.user_id;
+
   knex("posts")
     .insert({ img: fileImage, desc: fileDesc, user_id: userID })
     .then((data) => {

@@ -9,9 +9,9 @@ router.route("/").post((req, res) => {
       res
         .status(201)
         .location(newLikesURL)
-        .send(`Like with id: ${req.body.id} has been created`);
+        .send(`Like with id: ${req.body.id} has been added`);
     })
-    .catch((err) => res.status(400).send(`Error creating Post: ${err}`));
+    .catch((err) => res.status(400).send(`Error adding like: ${err}`));
 });
 
 router.route("/").delete((req, res) => {
