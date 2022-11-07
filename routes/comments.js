@@ -10,9 +10,9 @@ router.route("/").get((req, res) => {
 });
 
 router.route("/").post((req, res) => {
-  //   if (!req.text) {
-  //     return res.status(400).send("Please make sure to provide a comment");
-  //   }
+  if (!req.body.text) {
+    return res.status(400).send("Please make sure to provide a comment");
+  }
   const comment = req.body.text;
   const userID = req.body.user_id;
   const postID = req.body.post_id;
