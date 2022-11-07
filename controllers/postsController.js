@@ -10,7 +10,8 @@ exports.index = async (_req, res) => {
       "user_id",
       "posts.img",
       "posts.desc"
-    );
+    )
+    .orderBy("posts.id", "desc");
   const allLikes = await knex("likes");
   const postsWithLikes = posts.map((post) => {
     const likes = allLikes.filter((like) => like.post_id === post.id);

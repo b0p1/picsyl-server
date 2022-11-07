@@ -15,15 +15,18 @@ router.route("/").post((req, res) => {
 });
 
 router.route("/").delete((req, res) => {
-  console.log(req.body.post_id);
   knex("likes")
-    .where({ post_id: req.body.post_id })
+    .where({ post_id: req.body.post_id, user_id: req.body.user_id })
+    .del()
     .then(() => {
-      res.status(204).send(`Like with id: ${req.body.post_id} has been deleted`);
+      res
+        .status(204)
+        .send(`Like with id: ${req.body.post_id} has been deleted`);
     })
-    .catch((err) =>
-      res.status(400).send(`Error deleting Likes ${req.body.post_id} ${err}`)
-    );
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(`Error deleting Likes ${req.body.post_id} ${err}`);
+    });
 });
 
 module.exports = router;
