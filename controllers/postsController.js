@@ -1,6 +1,6 @@
 const knex = require("knex")(require("../knexfile"));
 
-exports.index = async (_req, res) => {
+exports.index = async (req, res) => {
   const posts = await knex("posts")
     .leftJoin("users", "posts.user_id", "users.id")
     .select(
@@ -19,7 +19,14 @@ exports.index = async (_req, res) => {
     return post;
   });
   //  console.log(postsWithLikes);
-  const allComments = await knex("comments");
+  const allComments = await knex("comments")
+    .innerJoin("users", "comments.user_id", "users.id")
+    .select(
+      "users.username",
+      "users.id as user_id",
+      "users.img as user_img",
+    );
+
   const postsWithLikesAndComments = postsWithLikes.map((post) => {
     const comments = allComments.filter(
       (comment) => comment.post_id === post.id
@@ -30,7 +37,7 @@ exports.index = async (_req, res) => {
 
   res.json(postsWithLikesAndComments);
 
-  //   .catch((err) => res.status(400).send(`Error retrieving posts ${err}`));
+  console.log(allComments);
 };
 
 exports.singlePost = async (req, res) => {
