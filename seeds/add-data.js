@@ -152,7 +152,7 @@ exports.seed = async function (knex) {
       user_id: 2,
       post_id: 2,
     },
-    { id: 9, text: "WOW", user_id: 4, post_id: 3 },
+    { id: 9, text: "WOW", user_id: 2, post_id: 3 },
     { id: 10, text: "That expression! Amazing work", user_id: 3, post_id: 3 },
     { id: 11, text: "so talented", user_id: 1, post_id: 3 },
     { id: 12, text: "thank you everyone!", user_id: 4, post_id: 3 },

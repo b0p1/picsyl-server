@@ -18,13 +18,15 @@ exports.index = async (req, res) => {
     post.likes = likes;
     return post;
   });
-  //  console.log(postsWithLikes);
   const allComments = await knex("comments")
     .innerJoin("users", "comments.user_id", "users.id")
     .select(
+      "comments.id",
       "users.username",
       "users.id as user_id",
       "users.img as user_img",
+      "comments.text",
+      "comments.post_id"
     );
 
   const postsWithLikesAndComments = postsWithLikes.map((post) => {
@@ -34,10 +36,7 @@ exports.index = async (req, res) => {
     post.comments = comments;
     return post;
   });
-
   res.json(postsWithLikesAndComments);
-
-  console.log(allComments);
 };
 
 exports.singlePost = async (req, res) => {
@@ -60,6 +59,7 @@ exports.singlePost = async (req, res) => {
     .select(
       "comments.id",
       "users.username",
+      "users.id as user_id",
       "comments.text",
       "users.img as user_img"
     );
@@ -72,6 +72,7 @@ exports.singlePost = async (req, res) => {
     const post = posts[0];
     post.likes = likes;
     post.comments = comments;
+    console.log(comments);
     res.send(post);
   }
 };
