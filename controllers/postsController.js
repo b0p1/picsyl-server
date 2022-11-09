@@ -72,7 +72,6 @@ exports.singlePost = async (req, res) => {
     const post = posts[0];
     post.likes = likes;
     post.comments = comments;
-    console.log(comments);
     res.send(post);
   }
 };
