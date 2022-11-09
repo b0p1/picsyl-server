@@ -27,7 +27,9 @@ exports.singleUser = async (req, res) => {
 };
 
 exports.userPosts = async (req, res) => {
-  const posts = await knex("posts").where({ user_id: req.params.id });
+  const posts = await knex("posts")
+    .where({ user_id: req.params.id })
+    .orderBy("posts.id", "desc");
   const allLikes = await knex("likes");
   const postsWithLikes = posts.map((post) => {
     const likes = allLikes.filter((like) => like.post_id === post.id);
