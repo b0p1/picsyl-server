@@ -16,7 +16,6 @@ router.route("/").post((req, res) => {
   const comment = req.body.text;
   const userID = req.body.user_id;
   const postID = req.body.post_id;
-  console.log(req.text, req.body.user_id, req.body.post_id);
   knex("comments")
     .insert({ text: comment, user_id: userID, post_id: postID })
     .then((data) => {
